@@ -33,6 +33,8 @@
 #include <opm/parser/eclipse/EclipseState/Tables/TableManager.hpp>
 #include <opm/parser/eclipse/Utility/String.hpp>
 
+#include "Grid/setKeywordBox.hpp"
+
 namespace Opm {
 
     namespace {
@@ -742,6 +744,12 @@ namespace Opm {
                 else if (deckKeyword.name() == "MULTIPLY")
                     handleMULTIPLYKeyword(deckKeyword, boxManager);
 
+                else if (deckKeyword.name() == "MAXVALUE")
+                    handleMAXVALUEKeyword(deckKeyword, boxManager);
+
+                else if (deckKeyword.name() == "MINVALUE")
+                    handleMINVALUEKeyword(deckKeyword, boxManager);
+
 
                 else if (deckKeyword.name() == "EQUALREG")
                     handleEQUALREGKeyword(deckKeyword);
@@ -855,7 +863,37 @@ namespace Opm {
         }
     }
 
+    //Note that the MAXVALUE kqeyword is processed in place for the current value of the keyword,
+    // and does not "stick" as a persistent attribute of the keyword.
+    void Eclipse3DProperties::handleMAXVALUEKeyword( const DeckKeyword& deckKeyword, BoxManager& boxManager) {
+        for( const auto& record : deckKeyword ) {
+            const std::string& field = record.getItem("field").get< std::string >(0);
 
+            if (m_doubleGridProperties.hasKeyword( field ))
+                m_doubleGridProperties.handleMAXVALUERecord( record , boxManager );
+            else if (m_intGridProperties.hasKeyword( field ))
+                m_intGridProperties.handleMAXVALUERecord( record , boxManager );
+            else
+                throw std::invalid_argument("Fatal error processing MAXVALUE keyword. Tried to limit not defined keyword " + field);
+
+        }
+    }
+
+    //Note that the MINVALUE keyword is processed in place for the current value of the keyword,
+    // and does not "stick" as a persistent attribute of the keyword.
+    void Eclipse3DProperties::handleMINVALUEKeyword( const DeckKeyword& deckKeyword, BoxManager& boxManager) {
+        for( const auto& record : deckKeyword ) {
+            const std::string& field = record.getItem("field").get< std::string >(0);
+
+            if (m_doubleGridProperties.hasKeyword( field ))
+                m_doubleGridProperties.handleMINVALUERecord( record , boxManager );
+            else if (m_intGridProperties.hasKeyword( field ))
+                m_intGridProperties.handleMINVALUERecord( record , boxManager );
+            else
+                throw std::invalid_argument("Fatal error processing MINVALUE keyword. Tried to limit not defined keyword " + field);
+
+        }
+    }
 
 
     void Eclipse3DProperties::handleMULTIPLYKeyword( const DeckKeyword& deckKeyword, BoxManager& boxManager) {
@@ -867,7 +905,7 @@ namespace Opm {
             else if (m_intGridProperties.hasKeyword( field ))
                 m_intGridProperties.handleMULTIPLYRecord( record , boxManager );
             else
-                throw std::invalid_argument("Fatal error processing MULTIPLY keyword. Tried to shift not defined keyword " + field);
+                throw std::invalid_argument("Fatal error processing MULTIPLY keyword. Tried to scale not defined keyword " + field);
 
         }
     }
@@ -931,48 +969,4 @@ namespace Opm {
         return messages;
     }
 
-
-    void Eclipse3DProperties::setKeywordBox( const DeckKeyword& deckKeyword,
-                                           const DeckRecord& deckRecord,
-                                           BoxManager& boxManager) {
-        const auto& I1Item = deckRecord.getItem("I1");
-        const auto& I2Item = deckRecord.getItem("I2");
-        const auto& J1Item = deckRecord.getItem("J1");
-        const auto& J2Item = deckRecord.getItem("J2");
-        const auto& K1Item = deckRecord.getItem("K1");
-        const auto& K2Item = deckRecord.getItem("K2");
-
-        size_t setCount = 0;
-
-        if (!I1Item.defaultApplied(0))
-            setCount++;
-
-        if (!I2Item.defaultApplied(0))
-            setCount++;
-
-        if (!J1Item.defaultApplied(0))
-            setCount++;
-
-        if (!J2Item.defaultApplied(0))
-            setCount++;
-
-        if (!K1Item.defaultApplied(0))
-            setCount++;
-
-        if (!K2Item.defaultApplied(0))
-            setCount++;
-
-        if (setCount == 6) {
-            boxManager.setKeywordBox( I1Item.get< int >(0) - 1,
-                                      I2Item.get< int >(0) - 1,
-                                      J1Item.get< int >(0) - 1,
-                                      J2Item.get< int >(0) - 1,
-                                      K1Item.get< int >(0) - 1,
-                                      K2Item.get< int >(0) - 1);
-        } else if (setCount != 0) {
-            std::string msg = "BOX modifiers on keywords must be either "
-                "specified completely or not at all. Ignoring.";
-            m_intGridProperties.getMessageContainer().error(deckKeyword.getFileName() + std::to_string(deckKeyword.getLineNumber()) + msg);
-        }
-    }
 }

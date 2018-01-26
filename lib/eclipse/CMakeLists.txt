@@ -52,6 +52,7 @@ set(opmparser_SOURCES Deck/Deck.cpp
                       EclipseState/Eclipse3DProperties.cpp
                       EclipseState/EclipseConfig.cpp
                       EclipseState/EclipseState.cpp
+                      EclipseState/Aquancon.cpp                      
                       EclipseState/EndpointScaling.cpp
                       EclipseState/Grid/Box.cpp
                       EclipseState/Grid/BoxManager.cpp
@@ -67,6 +68,7 @@ set(opmparser_SOURCES Deck/Deck.cpp
                       EclipseState/Grid/NNC.cpp
                       EclipseState/Grid/PinchMode.cpp
                       EclipseState/Grid/SatfuncPropertyInitializers.cpp
+                      EclipseState/Grid/setKeywordBox.cpp
                       EclipseState/Grid/TransMult.cpp
                       EclipseState/InitConfig/Equil.cpp
                       EclipseState/InitConfig/InitConfig.cpp
@@ -208,6 +210,7 @@ add_test(NAME EclipseStateTests
 
 foreach(test ADDREGTests
              AqudimsTests
+             AquanconTests
              BoxTests
              ColumnSchemaTests
              CompletionTests
@@ -285,10 +288,6 @@ foreach (test BoxTest
     target_link_libraries(${test} opmparser boost_test)
     add_test(NAME ${test} COMMAND ${test} ${_testdir}/integration_tests/)
 endforeach ()
-
-add_executable(generated-kw-test ${CMAKE_CURRENT_BINARY_DIR}/inlinekw.cpp)
-target_link_libraries(generated-kw-test opmparser boost_test)
-add_test(NAME generated-kw-test COMMAND generated-kw-test)
 
 add_executable(parse_write tests/integration/parse_write.cpp)
 target_link_libraries(parse_write opmparser boost_test)

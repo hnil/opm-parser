@@ -81,6 +81,8 @@ namespace Opm {
         void handleCOPYKeyword(    const DeckKeyword& deckKeyword, BoxManager& boxManager);
         void handleENDBOXKeyword(  BoxManager& boxManager);
         void handleEQUALSKeyword(  const DeckKeyword& deckKeyword, BoxManager& boxManager);
+        void handleMAXVALUEKeyword(const DeckKeyword& deckKeyword, BoxManager& boxManager);
+        void handleMINVALUEKeyword(const DeckKeyword& deckKeyword, BoxManager& boxManager);
         void handleMULTIPLYKeyword(const DeckKeyword& deckKeyword, BoxManager& boxManager);
 
         void handleADDREGKeyword(  const DeckKeyword& deckKeyword );
@@ -91,8 +93,6 @@ namespace Opm {
 
         void loadGridPropertyFromDeckKeyword(const Box& inputBox,
                                              const DeckKeyword& deckKeyword);
-
-        void setKeywordBox(const DeckKeyword& deckKeyword, const DeckRecord&, BoxManager& boxManager);
 
         std::string            m_defaultRegion;
         UnitSystem             m_deckUnitSystem;
