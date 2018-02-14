@@ -47,6 +47,7 @@
 #include <opm/parser/eclipse/EclipseState/Tables/VFPProdTable.hpp>
 #include <opm/parser/eclipse/EclipseState/Tables/Aqudims.hpp>
 #include <opm/parser/eclipse/Parser/MessageContainer.hpp>
+#include <opm/parser/eclipse/Parser/ParserKeyword.hpp>
 
 namespace Opm {
 

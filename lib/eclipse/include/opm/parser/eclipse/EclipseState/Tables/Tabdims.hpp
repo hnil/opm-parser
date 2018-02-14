@@ -25,7 +25,7 @@
   the values from the TABDIMS keyword.
 */
 
-#include <opm/parser/eclipse/Parser/ParserKeywords/T.hpp>
+#include <opm/parser/eclipse/Parser/ParserKeywords.hpp>
 #include <opm/parser/eclipse/Deck/Deck.hpp>
 #include <opm/parser/eclipse/Deck/DeckRecord.hpp>
 #include <opm/parser/eclipse/Deck/DeckKeyword.hpp>
